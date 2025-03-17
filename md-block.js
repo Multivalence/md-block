@@ -3,31 +3,27 @@
  * @author Lea Verou and Multivalence
  */
 
-
 (async () => {
 	const marked = (await import("https://cdn.jsdelivr.net/npm/marked/marked.min.js")).default;
-  })();
+})();
 let DOMPurify = window.DOMPurify;
 let Prism = window.Prism;
 
 
 class SimpleSlugger {
 	constructor() {
-	  this.seen = {};
+		this.seen = {};
 	}
 	slug(text) {
-	  if (typeof text !== 'string') {
-		return '';
-	  }
-	  let slug = text.toString().toLowerCase().trim().replace(/[^\w]+/g, '-');
-	  if (this.seen[slug]) {
-		slug += '-' + this.seen[slug]++;
-	  } else {
-		this.seen[slug] = 1;
-	  }
-	  return slug;
+		let slug = text.toString().toLowerCase().trim().replace(/[^\w]+/g, '-');
+		if (this.seen[slug]) {
+			slug += '-' + this.seen[slug]++;
+		} else {
+			this.seen[slug] = 1;
+		}
+		return slug;
 	}
-  }
+}
 
 export const URLs = {
 	marked: "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
@@ -103,9 +99,9 @@ export class MarkdownElement extends HTMLElement {
 
 		// Use the element’s custom renderer
 		marked.use({
-            langPrefix: "language-",
-            renderer: this.renderer
-          });
+			langPrefix: "language-",
+			renderer: this.renderer
+		});
 
 		let html = this._parse();
 
@@ -166,15 +162,10 @@ export class MarkdownSpan extends MarkdownElement {
 
 	static renderer = {
 		codespan(code) {
-			if (typeof code !== "string") {
-				
-				if (code.text !== undefined) {
-					code = code.text
-				} else {
-					return `<code>""</code>`;
-				}
-
-				
+			if (code.text !== undefined) {
+				code = code.text
+			} else {
+				return `<code>""</code>`;
 			}
 			if (this._contentFromHTML) {
 				// Inline HTML code needs to be escaped to not be parsed as HTML by the browser.
@@ -226,28 +217,28 @@ export class MarkdownBlock extends MarkdownElement {
 		heading(obj) {
 			let { depth, text } = obj;
 			const headingText = String(text);
-		  
+
 			depth = Math.min(6, depth + (this.hmin - 1));
-			
+
 			// Create a slugger instance (a shared instance would be better if you have multiple headings)
 			const slugger = new SimpleSlugger();
 			const id = slugger.slug(headingText);
-			
+
 			let hlinks = this.hlinks;
 			let content;
-			
+
 			if (hlinks === null) {
-			  content = headingText;
+				content = headingText;
 			} else {
-			  content = `<a href="#${id}" class="anchor">`;
-			  if (hlinks === "") {
-				content += headingText + "</a>";
-			  } else {
-				content += hlinks + "</a>" + headingText;
-			  }
+				content = `<a href="#${id}" class="anchor">`;
+				if (hlinks === "") {
+					content += headingText + "</a>";
+				} else {
+					content += hlinks + "</a>" + headingText;
+				}
 			}
 			return `<h${depth} id="${id}">${content}</h${depth}>`;
-		  },
+		},
 
 		code(code, language, escaped) {
 			if (this._contentFromHTML) {
@@ -294,7 +285,7 @@ export class MarkdownBlock extends MarkdownElement {
 						.then(text => {
 							this.mdContent = text;
 						})
-						.catch(e => {});
+						.catch(e => { });
 				}
 				break;
 			case "hmin":
