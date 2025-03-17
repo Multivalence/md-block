@@ -3,7 +3,10 @@
  * @author Lea Verou and Multivalence
  */
 
-let marked = window.marked;
+(async () => {
+	const marked = (await import("https://cdn.jsdelivr.net/npm/marked/marked.min.js")).default;
+  })();
+
 let DOMPurify = window.DOMPurify;
 let Prism = window.Prism;
 
