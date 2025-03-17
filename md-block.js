@@ -3,9 +3,8 @@
  * @author Lea Verou and Multivalence
  */
 
-(async () => {
-	const marked = (await import("https://cdn.jsdelivr.net/npm/marked/marked.min.js")).default;
-})();
+import { marked } from 'https://cdn.jsdelivr.net/npm/marked@15.0.7/lib/marked.esm.js';
+
 let DOMPurify = window.DOMPurify;
 let Prism = window.Prism;
 
@@ -26,7 +25,6 @@ class SimpleSlugger {
 }
 
 export const URLs = {
-	marked: "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
 	DOMPurify: "https://cdn.jsdelivr.net/npm/dompurify@2.3.4/dist/purify.es.min.js"
 };
 
@@ -91,13 +89,7 @@ export class MarkdownElement extends HTMLElement {
 			return;
 		}
 
-		// Dynamically import marked if needed, checking for the default export.
-		if (!marked) {
-			marked = import(URLs.marked).then(m => m.default || m);
-		}
-		marked = await marked;
-
-		// Use the element’s custom renderer
+		// Use the element's custom renderer
 		marked.use({
 			langPrefix: "language-",
 			renderer: this.renderer
