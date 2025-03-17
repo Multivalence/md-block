@@ -265,6 +265,38 @@ export class MarkdownBlock extends MarkdownElement {
 			return `<h${depth} id="${id}">${content}</h${depth}>`;
 		},
 
+		// Add table rendering support
+		table(obj) {
+			// Generate header
+			const headerCells = obj.header.map((cell, i) => {
+				const alignAttr = obj.align[i] ? ` align="${obj.align[i]}"` : '';
+				return `<th${alignAttr}>${cell.text}</th>`;
+			}).join('');
+			const header = `<tr>${headerCells}</tr>`;
+
+			// Generate rows
+			const rows = obj.rows.map(row => {
+				const cells = row.map((cell, i) => {
+					const alignAttr = obj.align[i] ? ` align="${obj.align[i]}"` : '';
+					return `<td${alignAttr}>${cell.text}</td>`;
+				}).join('');
+				return `<tr>${cells}</tr>`;
+			}).join('');
+
+			return `<table class="table">
+				<thead>${header}</thead>
+				<tbody>${rows}</tbody>
+			</table>`;
+		},
+
+		tablerow(obj) {
+			return obj.content;
+		},
+
+		tablecell(obj) {
+			return obj.content;
+		},
+
 		code(code) {
 			
 			if (code.text !== undefined) {
