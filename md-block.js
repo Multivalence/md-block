@@ -3,10 +3,10 @@
  * @author Lea Verou and Multivalence
  */
 
+
 (async () => {
 	const marked = (await import("https://cdn.jsdelivr.net/npm/marked/marked.min.js")).default;
   })();
-
 let DOMPurify = window.DOMPurify;
 let Prism = window.Prism;
 
@@ -167,7 +167,14 @@ export class MarkdownSpan extends MarkdownElement {
 	static renderer = {
 		codespan(code) {
 			if (typeof code !== "string") {
-				return `<code>""</code>`;
+				
+				if (code.text !== undefined) {
+					code = code.text
+				} else {
+					return `<code>""</code>`;
+				}
+
+				
 			}
 			if (this._contentFromHTML) {
 				// Inline HTML code needs to be escaped to not be parsed as HTML by the browser.
