@@ -1,6 +1,6 @@
 /**
  * <md-block> custom element
- * @author Lea Verou and Multivalence
+ * @author Lea Verou and Shiva M
  */
 
 import { marked } from 'https://cdn.jsdelivr.net/npm/marked@15.0.7/lib/marked.esm.js';
@@ -245,7 +245,7 @@ export class MarkdownBlock extends MarkdownElement {
 
 			depth = Math.min(6, depth + (this.hmin - 1));
 
-			// Create a slugger instance (a shared instance would be better if you have multiple headings)
+			// Create a slugger instance
 			const slugger = new SimpleSlugger();
 			const id = slugger.slug(text);
 
@@ -270,7 +270,8 @@ export class MarkdownBlock extends MarkdownElement {
 			// Generate header
 			const headerCells = obj.header.map((cell, i) => {
 				const alignAttr = obj.align[i] ? ` align="${obj.align[i]}"` : '';
-				return `<th${alignAttr}>${cell.text}</th>`;
+				const content = marked.parseInline(cell.text);
+				return `<th${alignAttr}>${content}</th>`;
 			}).join('');
 			const header = `<tr>${headerCells}</tr>`;
 
@@ -278,7 +279,8 @@ export class MarkdownBlock extends MarkdownElement {
 			const rows = obj.rows.map(row => {
 				const cells = row.map((cell, i) => {
 					const alignAttr = obj.align[i] ? ` align="${obj.align[i]}"` : '';
-					return `<td${alignAttr}>${cell.text}</td>`;
+					const content = marked.parseInline(cell.text);
+					return `<td${alignAttr}>${content}</td>`;
 				}).join('');
 				return `<tr>${cells}</tr>`;
 			}).join('');
