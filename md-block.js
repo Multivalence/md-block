@@ -232,7 +232,14 @@ export class MarkdownBlock extends MarkdownElement {
 			return `<h${depth} id="${id}">${content}</h${depth}>`;
 		},
 
-		code(code, language, escaped) {
+		code(code) {
+			
+			if (code.text !== undefined) {
+				code = code.text;
+			} else {
+				return `<pre><code></code></pre>`;
+			}
+
 			if (this._contentFromHTML) {
 				// Inline HTML code needs to be escaped to not be parsed as HTML by the browser.
 				// Marked double-escapes it, so we need to unescape it.
@@ -241,7 +248,7 @@ export class MarkdownBlock extends MarkdownElement {
 				// Remote code may include characters that need to be escaped to be visible in HTML.
 				code = code.replace(/</g, "&lt;");
 			}
-			return `<pre class="language-${language}"><code>${code}</code></pre>`;
+			return `<pre><code>${code}</code></pre>`;
 		}
 	}, MarkdownSpan.renderer);
 
