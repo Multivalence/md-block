@@ -5,6 +5,38 @@
 
 import { marked } from 'https://cdn.jsdelivr.net/npm/marked@15.0.7/lib/marked.esm.js';
 
+// Configure marked to handle nested markdown
+marked.setOptions({
+	headerIds: true,
+	mangle: false,
+	headerPrefix: '',
+	gfm: true
+});
+
+// Custom extensions for underlines
+const underlineExtension = {
+	name: 'underline',
+	level: 'inline',
+	start(src) { return src.match(/__/)?.index; },
+	tokenizer(src) {
+		const match = src.match(/^__([^_]+)__/);
+		if (match) {
+			return {
+				type: 'underline',
+				raw: match[0],
+				text: match[1]
+			};
+		}
+		return false;
+	},
+	renderer(token) {
+		return `<u>${token.text}</u>`;
+	}
+};
+
+// Add the extension to marked
+marked.use({ extensions: [underlineExtension] });
+
 let DOMPurify = window.DOMPurify;
 let Prism = window.Prism;
 
@@ -207,14 +239,15 @@ export class MarkdownBlock extends MarkdownElement {
 
 	static renderer = Object.assign({
 		heading(obj) {
-			let { depth, text } = obj;
-			const headingText = String(text);
+			let { depth, text, raw } = obj;
+			// Parse the heading text to handle nested markdown
+			const headingText = marked.parseInline(raw.slice(depth + 1));
 
 			depth = Math.min(6, depth + (this.hmin - 1));
 
 			// Create a slugger instance (a shared instance would be better if you have multiple headings)
 			const slugger = new SimpleSlugger();
-			const id = slugger.slug(headingText);
+			const id = slugger.slug(text);
 
 			let hlinks = this.hlinks;
 			let content;
